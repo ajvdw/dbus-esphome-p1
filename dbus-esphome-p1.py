@@ -147,7 +147,7 @@ class DbusESPHomeP1Service:
             self._dbusservice['/Ac/Power'] = meter_data['active_power_w']
             self._dbusservice['/Ac/L1/Voltage'] = meter_data['active_voltage_l1_v']
             self._dbusservice['/Ac/L2/Voltage'] = meter_data['active_voltage_l2_v']
-            self._dbusservice['/Ac/L3/Voltage'] = meter_data['active_voltage_l3_v'
+            self._dbusservice['/Ac/L3/Voltage'] = meter_data['active_voltage_l3_v']
             self._dbusservice['/Ac/L1/Current'] = meter_data['active_current_l1_a']
             self._dbusservice['/Ac/L2/Current'] = meter_data['active_current_l2_a']
             self._dbusservice['/Ac/L3/Current'] = meter_data['active_current_l3_a']
