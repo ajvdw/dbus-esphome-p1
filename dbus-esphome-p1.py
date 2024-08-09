@@ -161,7 +161,7 @@ class DbusESPHomeP1Service:
             #logging
             logging.debug("Grid Consumption (/Ac/Power): %s" % (self._dbusservice['/Ac/Power']))
             logging.debug("Grid Forward (/Ac/Energy/Forward): %s" % (self._dbusservice['/Ac/Energy/Forward']))
-            logging.debug("Grid Reverse (/Ac/Energy/Revers): %s" % (self._dbusservice['/Ac/Energy/Reverse']))
+            logging.debug("Grid Reverse (/Ac/Energy/Reverse): %s" % (self._dbusservice['/Ac/Energy/Reverse']))
             logging.debug("---");
             
             # increment UpdateIndex - to show that new data is available an wrap
@@ -246,8 +246,6 @@ def main():
                 '/Ac/L1/Power': {'initial': 0, 'textformat': _w},
                 '/Ac/L2/Power': {'initial': 0, 'textformat': _w},
                 '/Ac/L3/Power': {'initial': 0, 'textformat': _w},
-                '/Ac/L1/Energy/Forward': {'initial': 0, 'textformat': _kwh},
-                '/Ac/L1/Energy/Reverse': {'initial': 0, 'textformat': _kwh},
                 })
         logging.info('Connected to dbus, and switching over to gobject.MainLoop() (= event based)')
         mainloop = gobject.MainLoop()
