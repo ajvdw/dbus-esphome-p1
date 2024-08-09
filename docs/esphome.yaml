@@ -1,0 +1,240 @@
+substitutions:
+  device_name: slimmemeter
+  device_description: "P1 Smart Meter reader"
+     
+esphome:
+  name: ${device_name}
+  comment: "${device_description}"
+  platform: ESP8266
+  esp8266_restore_from_flash: true
+  board: d1_mini
+  name_add_mac_suffix: false
+ 
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  use_address: !secret ip_slimmemeter
+ 
+# Enable logging
+logger:
+  level: INFO
+  baud_rate: 0
+ 
+web_server:
+  port: 80
+
+# Enable Home Assistant API
+api:
+
+ota:
+  platform: esphome
+  password: !secret ota_password
+
+uart:
+  rx_pin: GPIO3
+  baud_rate: 115200
+  rx_buffer_size: 1500
+dsmr:
+  id: dsmr_instance
+
+sensor:
+  - platform: dsmr
+    energy_delivered_tariff1:
+      id: energy_delivered_tariff1
+      name: "ElecConsumptionLowTarif"
+      accuracy_decimals: 1
+      state_class: total_increasing
+    energy_delivered_tariff2:
+      id: energy_delivered_tariff2
+      name: "ElecConsumptionHighTarif"
+      accuracy_decimals: 1
+      state_class: total_increasing
+    energy_returned_tariff1:
+      id: energy_returned_tariff1
+      name: "ElecProductionLowTarif"
+      accuracy_decimals: 1
+      state_class: total_increasing
+    energy_returned_tariff2:
+      id: energy_returned_tariff2
+      name: "ElecProductionHighTarif"
+      accuracy_decimals: 1
+      state_class: total_increasing
+    power_delivered:
+      name: "Power Consumed"
+      id: power_delivered
+      accuracy_decimals: 3
+    power_returned:
+      name: "Power Produced"
+      id: power_returned
+      accuracy_decimals: 3
+    electricity_failures:
+      name: "Electricity Failures"
+      icon: mdi:alert
+    electricity_long_failures:
+      name: "Long Electricity Failures"
+      icon: mdi:alert
+    voltage_l1:
+      name: "Voltage Phase 1"
+      id: voltage_l1
+    voltage_l2:
+      name: "Voltage Phase 2"
+      id: voltage_l2
+    voltage_l3:
+      name: "Voltage Phase 3"
+      id: voltage_l3
+    current_l1:
+      name: "Current Phase 1"
+      id: current_l1
+    current_l2:
+      name: "Current Phase 2"
+      id: current_l2
+    current_l3:
+      name: "Current Phase 3"
+      id: current_l3
+    power_delivered_l1:
+      id: power_delivered_l1
+      name: "Power Consumed Phase 1"
+      accuracy_decimals: 1
+    power_delivered_l2:
+      id: power_delivered_l2
+      name: "Power Consumed Phase 2"
+      accuracy_decimals: 1
+    power_delivered_l3:
+      id: power_delivered_l3
+      name: "Power Consumed Phase 3"
+      accuracy_decimals: 1
+    power_returned_l1:
+      id: power_returned_l1
+      name: "Power Produced Phase 1"
+      accuracy_decimals: 1
+    power_returned_l2:
+      id: power_returned_l2
+      name: "Power Produced Phase 2"
+      accuracy_decimals: 1
+    power_returned_l3:
+      id: power_returned_l3
+      name: "Power Produced Phase 3"
+      accuracy_decimals: 1
+    gas_delivered:
+      id: gasusage
+      name: "GasUsage"
+      accuracy_decimals: 1
+      state_class: total_increasing
+      force_update: true
+      filters:
+        heartbeat: 300s
+  - platform: template
+    name: "NetPower"
+    id: netpower
+    unit_of_measurement: "kW"
+    accuracy_decimals: 1
+    lambda: |-
+      return (id(power_delivered).state) - (id(power_returned).state) ;
+    update_interval: 1s
+  - platform: template
+    name: "ElecNetConsumption"
+    state_class: measurement
+    unit_of_measurement: "kWh"
+    accuracy_decimals: 3
+    lambda: |-
+      return (id(energy_delivered_tariff1).state) + (id(energy_delivered_tariff2).state) - 
+         (id(energy_returned_tariff1).state) - (id(energy_returned_tariff2).state);
+    update_interval: 60s
+  - platform: template
+    name: "Total power" 
+    id: total_power
+    lambda: |-
+      return (id(power_delivered).state - id(power_returned).state)*1000.0;
+    update_interval: 1s
+    device_class: power
+    state_class: measurement
+    unit_of_measurement: W
+  - platform: template
+    name: "Power Phase 1" 
+    id: power_l1
+    lambda: |-
+      return (id(power_delivered_l1).state - id(power_returned_l1).state)*1000.0;
+    update_interval: 1s
+    device_class: power
+    state_class: measurement
+    unit_of_measurement: W
+  - platform: template
+    name: "Power Phase 2" 
+    id: power_l2
+    lambda: |-
+      return (id(power_delivered_l2).state - id(power_returned_l2).state)*1000.0;
+    update_interval: 1s
+    device_class: power
+    state_class: measurement
+    unit_of_measurement: W
+  - platform: template
+    name: "Power Phase 3" 
+    id: power_l3
+    lambda: |-
+      return (id(power_delivered_l3).state - id(power_returned_l3).state)*1000.0;
+    update_interval: 1s
+    device_class: power
+    state_class: measurement
+    unit_of_measurement: W
+  - platform: template
+    name: "Total consumed" 
+    id: total_consumed
+    lambda: |-
+      return id(energy_delivered_tariff1).state + id(energy_delivered_tariff2).state;
+    update_interval: 1s
+    device_class: energy
+    state_class: total_increasing
+    unit_of_measurement: kWh
+  - platform: template
+    name: "Total injected" 
+    id: total_injected
+    lambda: |-
+      return id(energy_returned_tariff1).state + id(energy_returned_tariff2).state;
+    update_interval: 1s
+    device_class: energy
+    state_class: total_increasing
+    unit_of_measurement: kWh
+  - platform: uptime
+    name: "Uptime ${device_name}"
+    unit_of_measurement: 'h'
+    accuracy_decimals: 0
+    filters:    
+      multiply: 0.000277
+    update_interval: 360s
+    
+text_sensor:
+  - platform: dsmr
+    identification:
+      name: Identification
+      id: meter_id
+    p1_version:
+      name: Version
+  - platform: version
+    name: "ESPHome Version ${device_name}"
+    hide_timestamp: true
+  - platform: template
+    name: "p1data" 
+    id: p1data
+    internal: true
+    lambda: |-
+      return str_sprintf("['%s',[%.1lf,%.1lf,%.1lf],[%.1lf,%.1lf,%.1lf],[%d,%d,%d],%d,%d,%d]", 
+        (id(meter_id).state.c_str()), 
+        (id(voltage_l1).state), 
+        (id(voltage_l2).state), 
+        (id(voltage_l3).state), 
+        (1000.0 *(id(power_delivered_l1).state-id(power_returned_l1).state) / id(voltage_l1).state),  
+        (1000.0 *(id(power_delivered_l2).state-id(power_returned_l2).state) / id(voltage_l2).state), 
+        (1000.0 *(id(power_delivered_l3).state-id(power_returned_l3).state) / id(voltage_l3).state), 
+        (int)(1000.0 *(id(power_delivered_l1).state-id(power_returned_l1).state)),
+        (int)(1000.0 *(id(power_delivered_l2).state-id(power_returned_l2).state)),
+        (int)(1000.0 *(id(power_delivered_l3).state-id(power_returned_l3).state)),
+        (int)(1000.0 *(id(power_delivered).state - id(power_returned).state)), 
+        (int)((id(energy_delivered_tariff1).state+id(energy_delivered_tariff2).state)),
+        (int)((id(energy_returned_tariff1).state+id(energy_returned_tariff2).state))
+        );      
+    update_interval: 1s
+
+switch:
+  - platform: restart
+    name: "Restart ${device_name}"
+    
