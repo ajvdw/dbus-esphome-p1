@@ -32,7 +32,7 @@ Within the project there is a file `/data/dbus-esphome-p1/config.ini` - just cha
 | DEFAULT  | CustomName  | Name of your device - usefull if you want to run multiple versions of the script |
 | DEFAULT  | DeviceInstance  | DeviceInstanceNumber e.g. 40 |
 | DEFAULT  | LogLevel  | Define the level of logging - lookup: https://docs.python.org/3/library/logging.html#levels |
-| DEFAULT. | Host | IP or hostname of the ESPHome device |
+| DEFAULT  | Host | IP or hostname of the ESPHome device |
 
 ## Used documentation
 - https://github.com/victronenergy/venus/wiki/dbus#grid   DBus paths for Victron namespace GRID
