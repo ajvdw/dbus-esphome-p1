@@ -1,5 +1,5 @@
 # dbus-esphome-p1
-Integrate ESPHome P1 meter into [Victron Energies Venus OS](https://github.com/victronenergy/venus)
+Integrate ESPHome P1 meter into [Victron Energy Venus OS](https://github.com/victronenergy/venus)
 
 ## Purpose
 With the scripts in this repo it should be possible to add the ESPhome P1 meter to VenusOS. 
