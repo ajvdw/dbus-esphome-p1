@@ -21,7 +21,7 @@ chmod a+x /data/dbus-esphome-p1/install.sh
 /data/dbus-esphome-p1/install.sh
 rm main.zip
 ```
-⚠️ Check configuration after that - because service is already installed an running and with wrong connection data (host, username, pwd) you will spam the log-file
+⚠️ Check configuration after that - because service is already installed an running and with wrong connection data you will spam the log-file
 
 ### Change config.ini
 Within the project there is a file `/data/dbus-esphome-p1/config.ini` - just change the values - most important is the host
